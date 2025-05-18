@@ -134,13 +134,16 @@
         
         .resize-handle {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 20px;
+            height: 20px;
             background-color: #3498db;
             border-radius: 50%;
-            bottom: -5px;
-            right: -5px;
+            bottom: -10px;
+            right: -10px;
             cursor: se-resize;
+            border: 2px solid white;
+            box-shadow: 0 0 3px rgba(0,0,0,0.3);
+            z-index: 10;
         }
         
         .instructions {
@@ -216,6 +219,10 @@
         <div class="font-controls">
             <input type="color" id="colorPicker" class="color-picker" value="#000000">
             <select id="fontSizeSelector" class="font-size-selector">
+                <option value="6">6px</option>
+                <option value="8">8px</option>
+                <option value="10">10px</option>
+                <option value="12">12px</option>
                 <option value="16">16px</option>
                 <option value="20">20px</option>
                 <option value="24">24px</option>
