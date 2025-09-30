@@ -1,606 +1,426 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แอปแก้ไขรูปภาพและเพิ่มข้อความ</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Prompt', sans-serif;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 100%;
-            overflow-x: hidden;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-        
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .button {
-            padding: 10px 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            margin: 5px;
-        }
-        
-        .button:hover {
-            background-color: #2980b9;
-        }
-        
-        .button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        
-        .canvas-container {
-            position: relative;
-            width: 100%;
-            margin: 0 auto;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            background-color: #eee;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            margin-bottom: 20px;
-            min-height: 300px;
-        }
-        
-        canvas {
-            max-width: 100%;
-            max-height: 70vh;
-            display: block;
-        }
-        
-        .text-controls {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .text-input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            flex-grow: 1;
-            min-width: 200px;
-        }
-        
-        .font-controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .color-picker {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-        
-        .font-size-selector, .font-family-selector {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        .text-item {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            padding: 5px;
-            border: 1px dashed transparent;
-        }
-        
-        .text-item.selected {
-            border: 1px dashed #3498db;
-        }
-        
-        .resize-handle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #3498db;
-            border-radius: 50%;
-            bottom: -10px;
-            right: -10px;
-            cursor: se-resize;
-            border: 2px solid white;
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        .instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            border-left: 5px solid #3498db;
-            font-size: 14px;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 5px;
-        }
-        
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            color: white;
-            font-size: 20px;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .text-controls, .font-controls {
-                flex-direction: column;
-            }
-            
-            .button {
-                width: 100%;
-                margin: 5px 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>แอปแก้ไขรูปภาพและเพิ่มข้อความ</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Prompt',sans-serif}
+    body{max-width:100%;overflow-x:hidden;background:#f5f7fa;color:#333}
+    .container{width:100%;max-width:800px;margin:0 auto;padding:20px}
+    h1{text-align:center;margin-bottom:20px;color:#2c3e50}
+    .upload-container{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
+    .button{padding:10px 15px;background:#3498db;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:16px;transition:.3s;margin:5px}
+    .button:hover{background:#2980b9}
+    .button:disabled{background:#95a5a6;cursor:not-allowed}
+    .canvas-container{position:relative;width:100%;margin:0 auto;border:2px solid #ccc;border-radius:4px;background:#eee;display:flex;justify-content:center;align-items:center;overflow:hidden;margin-bottom:20px;min-height:300px}
+    canvas{max-width:100%;max-height:70vh;display:block}
+    .text-controls{margin-bottom:20px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+    .text-input{padding:10px;border:1px solid #ccc;border-radius:4px;flex-grow:1;min-width:200px}
+    .font-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:10px}
+    .align-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:20px}
+    .color-picker{width:40px;height:40px;padding:0;border:1px solid #ccc;cursor:pointer}
+    .font-size-selector,.font-family-selector{padding:8px;border:1px solid #ccc;border-radius:4px}
+    .text-item{position:absolute;cursor:move;user-select:none;padding:5px;border:1px dashed transparent;white-space:pre; /* ให้รองรับ \n ได้ในอนาคต */ }
+    .text-item.selected{border:1px dashed #3498db}
+    .resize-handle{position:absolute;width:20px;height:20px;background:#3498db;border-radius:50%;bottom:-10px;right:-10px;cursor:se-resize;border:2px solid #fff;box-shadow:0 0 3px rgba(0,0,0,.3)}
+    .align-button{padding:8px 10px;border:1px solid #d0d7de;background:#fff;border-radius:6px;cursor:pointer;font-size:14px}
+    .align-button.active{background:#eaf5ff;border-color:#1f6feb}
+    .instructions{margin-top:20px;padding:15px;background:#f9f9f9;border-radius:4px;border-left:5px solid #3498db;font-size:14px}
+    .instructions h3{margin-bottom:10px}
+    .instructions ul{padding-left:20px}
+    .instructions li{margin-bottom:5px}
+    @media (max-width:600px){
+      .container{padding:10px}
+      .text-controls,.font-controls,.align-controls{flex-direction:column}
+      .button{width:100%;margin:5px 0}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>แอปแก้ไขรูปภาพและเพิ่มข้อความ</h1>
-        
-        <div class="upload-container">
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-            <button class="button" id="uploadButton">อัพโหลดรูปภาพ</button>
-        </div>
-        
-        <div class="canvas-container" id="canvasContainer">
-            <canvas id="canvas"></canvas>
-        </div>
-        
-        <div class="text-controls">
-            <input type="text" id="textInput" class="text-input" placeholder="ใส่ข้อความที่นี่">
-            <button class="button" id="addTextButton" disabled>เพิ่มข้อความ</button>
-        </div>
-        
-        <div class="font-controls">
-            <input type="color" id="colorPicker" class="color-picker" value="#000000">
-            <select id="fontSizeSelector" class="font-size-selector">
-                <option value="8">8px</option>
-                <option value="10">10px</option>
-                <option value="12">12px</option>
-                <option value="16">16px</option>
-                <option value="20">20px</option>
-                <option value="24">24px</option>
-                <option value="32">32px</option>
-                <option value="40">40px</option>
-                <option value="48">48px</option>
-                <option value="64">64px</option>
-            </select>
-            <select id="fontFamilySelector" class="font-family-selector">
-                <option value="Arial">Arial</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Tahoma">Tahoma</option>
-                <option value="Impact">Impact</option>
-            </select>
-        </div>
-        
-        <div style="text-align: center;">
-            <button class="button" id="downloadButton" disabled>ดาวน์โหลดรูปภาพ</button>
-            <button class="button" id="deleteTextButton" disabled>ลบข้อความที่เลือก</button>
-        </div>
-        
-        <div class="instructions">
-            <h3>วิธีใช้งาน:</h3>
-            <ul>
-                <li>อัพโหลดรูปภาพที่ต้องการแก้ไข</li>
-                <li>พิมพ์ข้อความและกดปุ่ม "เพิ่มข้อความ"</li>
-                <li>คลิกที่ข้อความเพื่อเลือก และลากเพื่อเปลี่ยนตำแหน่ง</li>
-                <li>ใช้จุดลากที่มุมขวาล่างเพื่อปรับขนาดข้อความ</li>
-                <li>เลือกข้อความและกดปุ่ม "ลบข้อความที่เลือก" เพื่อลบข้อความ</li>
-                <li>กดปุ่ม "ดาวน์โหลดรูปภาพ" เมื่อแก้ไขเสร็จ</li>
-            </ul>
-        </div>
+  <div class="container">
+    <h1>แอปแก้ไขรูปภาพและเพิ่มข้อความ</h1>
+
+    <div class="upload-container">
+      <input type="file" id="imageUpload" accept="image/*" style="display:none" />
+      <button class="button" id="uploadButton">อัพโหลดรูปภาพ</button>
     </div>
 
-    <script>
-        // สร้างตัวแปรสำหรับเก็บค่าต่างๆ
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const canvasContainer = document.getElementById('canvasContainer');
-        const uploadButton = document.getElementById('uploadButton');
-        const imageUpload = document.getElementById('imageUpload');
-        const addTextButton = document.getElementById('addTextButton');
-        const downloadButton = document.getElementById('downloadButton');
-        const textInput = document.getElementById('textInput');
-        const colorPicker = document.getElementById('colorPicker');
-        const fontSizeSelector = document.getElementById('fontSizeSelector');
-        const fontFamilySelector = document.getElementById('fontFamilySelector');
-        const deleteTextButton = document.getElementById('deleteTextButton');
-        
-        let image = null;
-        let textItems = [];
-        let selectedText = null;
-        let isDragging = false;
-        let isResizing = false;
-        let offsetX, offsetY;
-        let startX, startY;
-        let startWidth, startHeight;
-        
-        // ฟังก์ชันสำหรับการอัพโหลดรูปภาพ
-        uploadButton.addEventListener('click', () => {
-            imageUpload.click();
-        });
-        
-        imageUpload.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = (event) => {
-                    image = new Image();
-                    image.onload = () => {
-                        resetCanvas();
-                        drawImage();
-                        addTextButton.disabled = false;
-                        downloadButton.disabled = false;
-                    };
-                    image.src = event.target.result;
-                };
-                
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-        
-        // ฟังก์ชันสำหรับการรีเซ็ตแคนวาส
-        function resetCanvas() {
-            // ลบข้อความทั้งหมดออกจาก canvas container
-            Array.from(canvasContainer.getElementsByClassName('text-item')).forEach(item => {
-                canvasContainer.removeChild(item);
-            });
-            textItems = [];
-            selectedText = null;
-            deleteTextButton.disabled = true;
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="text-controls">
+      <input type="text" id="textInput" class="text-input" placeholder="ใส่ข้อความที่นี่" />
+      <button class="button" id="addTextButton" disabled>เพิ่มข้อความ</button>
+    </div>
+
+    <div class="font-controls">
+      <input type="color" id="colorPicker" class="color-picker" value="#000000" />
+      <select id="fontSizeSelector" class="font-size-selector">
+        <option value="8">8px</option><option value="10">10px</option><option value="12">12px</option>
+        <option value="16" selected>16px</option><option value="20">20px</option><option value="24">24px</option>
+        <option value="32">32px</option><option value="40">40px</option><option value="48">48px</option>
+        <option value="64">64px</option>
+      </select>
+      <select id="fontFamilySelector" class="font-family-selector">
+        <option value="Arial">Arial</option><option value="Verdana">Verdana</option><option value="Helvetica">Helvetica</option>
+        <option value="Times New Roman">Times New Roman</option><option value="Courier New">Courier New</option>
+        <option value="Tahoma">Tahoma</option><option value="Impact">Impact</option>
+      </select>
+    </div>
+
+    <!-- ปุ่มจัดแนวข้อความ -->
+    <div class="align-controls">
+      <button class="align-button" id="alignLeftBtn"  title="จัดชิดซ้าย">จัดซ้าย</button>
+      <button class="align-button" id="alignCenterBtn" title="จัดกึ่งกลาง">จัดกลาง</button>
+      <button class="align-button" id="alignRightBtn" title="จัดชิดขวา">จัดขวา</button>
+    </div>
+
+    <div style="text-align:center">
+      <button class="button" id="downloadButton" disabled>ดาวน์โหลดรูปภาพ</button>
+      <button class="button" id="deleteTextButton" disabled>ลบข้อความที่เลือก</button>
+    </div>
+
+    <div class="instructions">
+      <h3>วิธีใช้งาน:</h3>
+      <ul>
+        <li>อัพโหลดรูปภาพที่ต้องการแก้ไข</li>
+        <li>พิมพ์ข้อความและกดปุ่ม "เพิ่มข้อความ"</li>
+        <li>คลิกที่ข้อความเพื่อเลือก และลากเพื่อเปลี่ยนตำแหน่ง</li>
+        <li>ใช้จุดลากที่มุมขวาล่างเพื่อปรับขนาดข้อความ</li>
+        <li>ใช้ปุ่ม “จัดซ้าย/กลาง/ขวา” เพื่อจัดแนวข้อความ</li>
+        <li>กดปุ่ม "ดาวน์โหลดรูปภาพ" เมื่อแก้ไขเสร็จ</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // ---- Elements & State ----
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const canvasContainer = document.getElementById('canvasContainer');
+    const uploadButton = document.getElementById('uploadButton');
+    const imageUpload = document.getElementById('imageUpload');
+    const addTextButton = document.getElementById('addTextButton');
+    const downloadButton = document.getElementById('downloadButton');
+    const textInput = document.getElementById('textInput');
+    const colorPicker = document.getElementById('colorPicker');
+    const fontSizeSelector = document.getElementById('fontSizeSelector');
+    const fontFamilySelector = document.getElementById('fontFamilySelector');
+    const deleteTextButton = document.getElementById('deleteTextButton');
+
+    // alignment buttons
+    const alignLeftBtn = document.getElementById('alignLeftBtn');
+    const alignCenterBtn = document.getElementById('alignCenterBtn');
+    const alignRightBtn = document.getElementById('alignRightBtn');
+    const alignButtons = [alignLeftBtn, alignCenterBtn, alignRightBtn];
+
+    let image = null;
+    let textItems = [];
+    let selectedText = null;
+    let isDragging = false;
+    let isResizing = false;
+    let offsetX, offsetY, startX, startY, startWidth, startHeight;
+
+    // ---- Upload image ----
+    uploadButton.addEventListener('click', () => imageUpload.click());
+    imageUpload.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          image = new Image();
+          image.onload = () => {
+            resetCanvas();
+            drawImage();
+            addTextButton.disabled = false;
+            downloadButton.disabled = false;
+          };
+          image.src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    function resetCanvas(){
+      Array.from(canvasContainer.getElementsByClassName('text-item')).forEach(el => canvasContainer.removeChild(el));
+      textItems = [];
+      selectedText = null;
+      deleteTextButton.disabled = true;
+      setAlignButtonsState(null);
+    }
+
+    function drawImage(){
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      const maxWidth = canvasContainer.clientWidth;
+      const maxHeight = window.innerHeight * 0.7;
+      const scale = Math.min(maxWidth / image.width, maxHeight / image.height);
+
+      if (scale < 1){
+        canvas.style.width = `${image.width * scale}px`;
+        canvas.style.height = `${image.height * scale}px`;
+      }else{
+        canvas.style.width = `${image.width}px`;
+        canvas.style.height = `${image.height}px`;
+      }
+
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(image,0,0,canvas.width,canvas.height);
+    }
+
+    // ---- Add text ----
+    addTextButton.addEventListener('click', () => {
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      const color = colorPicker.value;
+      const fontSize = fontSizeSelector.value;
+      const fontFamily = fontFamilySelector.value;
+
+      const textItem = document.createElement('div');
+      textItem.className = 'text-item';
+      textItem.style.color = color;
+      textItem.style.fontSize = `${fontSize}px`;
+      textItem.style.fontFamily = fontFamily;
+      textItem.style.left = '50%';
+      textItem.style.top = '50%';
+      textItem.style.transform = 'translate(-50%, -50%)';
+      textItem.style.textAlign = 'left';             // default align
+      textItem.style.minWidth = '40px';              // ให้ alignment เห็นผลแม้ข้อความสั้น
+      textItem.innerText = text;
+
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = 'resize-handle';
+      textItem.appendChild(resizeHandle);
+
+      canvasContainer.appendChild(textItem);
+
+      const newTextItem = {
+        element: textItem,
+        text,
+        color,
+        fontSize,
+        fontFamily,
+        align: 'left', // keep in state
+        x: canvasContainer.clientWidth / 2 - textItem.clientWidth / 2,
+        y: canvasContainer.clientHeight / 2 - textItem.clientHeight / 2,
+        width: textItem.clientWidth,
+        height: textItem.clientHeight
+      };
+
+      textItems.push(newTextItem);
+      selectText(newTextItem);
+      updateTextPosition(newTextItem);
+      textInput.value = '';
+    });
+
+    function selectText(item){
+      if (selectedText){ selectedText.element.classList.remove('selected'); }
+      selectedText = item;
+      selectedText.element.classList.add('selected');
+      deleteTextButton.disabled = false;
+
+      colorPicker.value = selectedText.color;
+      fontSizeSelector.value = selectedText.fontSize;
+      fontFamilySelector.value = selectedText.fontFamily;
+      setAlignButtonsState(selectedText.align);
+    }
+
+    function updateTextPosition(item){
+      item.element.style.left = `${item.x}px`;
+      item.element.style.top = `${item.y}px`;
+      item.element.style.transform = 'none';
+    }
+
+    // ---- Drag / Resize ----
+    canvasContainer.addEventListener('mousedown', startDragOrResize);
+    canvasContainer.addEventListener('touchstart', startDragOrResize, {passive:false});
+    document.addEventListener('mousemove', dragOrResize);
+    document.addEventListener('touchmove', dragOrResize, {passive:false});
+    document.addEventListener('mouseup', stopDragOrResize);
+    document.addEventListener('touchend', stopDragOrResize);
+
+    function startDragOrResize(e){
+      e.preventDefault();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      if (clientX == null || clientY == null) return;
+
+      if (selectedText && e.target.className === 'resize-handle'){
+        isResizing = true;
+        startX = clientX; startY = clientY;
+        startWidth = selectedText.element.offsetWidth;
+        startHeight = selectedText.element.offsetHeight;
+        return;
+      }
+
+      for (let i = textItems.length - 1; i >= 0; i--){
+        const item = textItems[i];
+        const rect = item.element.getBoundingClientRect();
+        if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom){
+          selectText(item);
+          isDragging = true;
+          const canvasRect = canvasContainer.getBoundingClientRect();
+          offsetX = clientX - rect.left;
+          offsetY = clientY - rect.top;
+          return;
         }
-        
-        // ฟังก์ชันสำหรับการวาดรูปภาพลงบนแคนวาส
-        function drawImage() {
-            // ปรับขนาดแคนวาสตามรูปภาพ
-            canvas.width = image.width;
-            canvas.height = image.height;
-            
-            // ปรับขนาดความกว้างของแคนวาสให้ไม่เกินความกว้างของหน้าจอ
-            const maxWidth = canvasContainer.clientWidth;
-            const maxHeight = window.innerHeight * 0.7;
-            
-            const scale = Math.min(maxWidth / image.width, maxHeight / image.height);
-            
-            // ถ้ารูปใหญ่กว่าพื้นที่ที่กำหนด ให้ย่อลง
-            if (scale < 1) {
-                canvas.style.width = `${image.width * scale}px`;
-                canvas.style.height = `${image.height * scale}px`;
-            } else {
-                canvas.style.width = `${image.width}px`;
-                canvas.style.height = `${image.height}px`;
-            }
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        }
-        
-        // ฟังก์ชันสำหรับการเพิ่มข้อความ
-        addTextButton.addEventListener('click', () => {
-            const text = textInput.value.trim();
-            if (!text) return;
-            
-            const color = colorPicker.value;
-            const fontSize = fontSizeSelector.value;
-            const fontFamily = fontFamilySelector.value;
-            
-            // สร้าง div สำหรับข้อความ
-            const textItem = document.createElement('div');
-            textItem.className = 'text-item';
-            textItem.style.color = color;
-            textItem.style.fontSize = `${fontSize}px`;
-            textItem.style.fontFamily = fontFamily;
-            textItem.style.left = '50%';
-            textItem.style.top = '50%';
-            textItem.style.transform = 'translate(-50%, -50%)';
-            textItem.innerText = text;
-            
-            // สร้างจุดสำหรับปรับขนาด
-            const resizeHandle = document.createElement('div');
-            resizeHandle.className = 'resize-handle';
-            textItem.appendChild(resizeHandle);
-            
-            canvasContainer.appendChild(textItem);
-            
-            const newTextItem = {
-                element: textItem,
-                text,
-                color,
-                fontSize,
-                fontFamily,
-                x: canvasContainer.clientWidth / 2 - textItem.clientWidth / 2,
-                y: canvasContainer.clientHeight / 2 - textItem.clientHeight / 2,
-                width: textItem.clientWidth,
-                height: textItem.clientHeight
-            };
-            
-            textItems.push(newTextItem);
-            selectText(newTextItem);
-            
-            // อัปเดตตำแหน่ง
-            updateTextPosition(newTextItem);
-            
-            textInput.value = '';
-        });
-        
-        // ฟังก์ชันสำหรับการเลือกข้อความ
-        function selectText(textItem) {
-            if (selectedText) {
-                selectedText.element.classList.remove('selected');
-            }
-            
-            selectedText = textItem;
-            selectedText.element.classList.add('selected');
-            deleteTextButton.disabled = false;
-            
-            // อัปเดตค่าในตัวเลือกแก้ไข
-            colorPicker.value = selectedText.color;
-            fontSizeSelector.value = selectedText.fontSize;
-            fontFamilySelector.value = selectedText.fontFamily;
-        }
-        
-        // ฟังก์ชันสำหรับการอัปเดตตำแหน่งข้อความ
-        function updateTextPosition(textItem) {
-            textItem.element.style.left = `${textItem.x}px`;
-            textItem.element.style.top = `${textItem.y}px`;
-            textItem.element.style.transform = 'none';
-        }
-        
-        // การจัดการกับการลาก (Drag) ข้อความ
-        canvasContainer.addEventListener('mousedown', startDragOrResize);
-        canvasContainer.addEventListener('touchstart', startDragOrResize);
-        
-        document.addEventListener('mousemove', dragOrResize);
-        document.addEventListener('touchmove', dragOrResize);
-        
-        document.addEventListener('mouseup', stopDragOrResize);
-        document.addEventListener('touchend', stopDragOrResize);
-        
-        function startDragOrResize(e) {
-            e.preventDefault();
-            
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            
-            if (!clientX || !clientY) return;
-            
-            // ตรวจสอบว่าคลิกที่จุดปรับขนาดหรือไม่
-            if (selectedText && e.target.className === 'resize-handle') {
-                isResizing = true;
-                startX = clientX;
-                startY = clientY;
-                startWidth = selectedText.element.offsetWidth;
-                startHeight = selectedText.element.offsetHeight;
-                return;
-            }
-            
-            // ตรวจสอบการคลิกข้อความ
-            for (let i = textItems.length - 1; i >= 0; i--) {
-                const item = textItems[i];
-                const rect = item.element.getBoundingClientRect();
-                
-                if (
-                    clientX >= rect.left && 
-                    clientX <= rect.right && 
-                    clientY >= rect.top && 
-                    clientY <= rect.bottom
-                ) {
-                    selectText(item);
-                    isDragging = true;
-                    
-                    const canvasRect = canvasContainer.getBoundingClientRect();
-                    offsetX = clientX - rect.left;
-                    offsetY = clientY - rect.top;
-                    return;
-                }
-            }
-            
-            // ถ้าไม่ได้คลิกที่ข้อความใดๆ ให้ยกเลิกการเลือก
-            if (selectedText) {
-                selectedText.element.classList.remove('selected');
-                selectedText = null;
-                deleteTextButton.disabled = true;
-            }
-        }
-        
-        function dragOrResize(e) {
-            if (!isDragging && !isResizing) return;
-            
-            e.preventDefault();
-            
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            
-            if (!clientX || !clientY) return;
-            
-            if (isResizing && selectedText) {
-                // คำนวณขนาดใหม่
-                const width = startWidth + (clientX - startX);
-                const height = startHeight + (clientY - startY);
-                
-                // กำหนดขนาดขั้นต่ำ
-                const minSize = 20;
-                selectedText.element.style.width = `${Math.max(width, minSize)}px`;
-                selectedText.element.style.height = `${Math.max(height, minSize)}px`;
-                
-                // อัปเดตค่าขนาดในออบเจ็กต์
-                selectedText.width = Math.max(width, minSize);
-                selectedText.height = Math.max(height, minSize);
-            } else if (isDragging && selectedText) {
-                const canvasRect = canvasContainer.getBoundingClientRect();
-                let newX = clientX - canvasRect.left - offsetX;
-                let newY = clientY - canvasRect.top - offsetY;
-                
-                // จำกัดพื้นที่ให้อยู่ภายในแคนวาส
-                newX = Math.max(0, Math.min(newX, canvasRect.width - selectedText.element.offsetWidth));
-                newY = Math.max(0, Math.min(newY, canvasRect.height - selectedText.element.offsetHeight));
-                
-                selectedText.x = newX;
-                selectedText.y = newY;
-                updateTextPosition(selectedText);
-            }
-        }
-        
-        function stopDragOrResize() {
-            isDragging = false;
-            isResizing = false;
-        }
-        
-        // การจัดการกับการลบข้อความ
-        deleteTextButton.addEventListener('click', () => {
-            if (!selectedText) return;
-            
-            canvasContainer.removeChild(selectedText.element);
-            textItems = textItems.filter(item => item !== selectedText);
-            selectedText = null;
-            deleteTextButton.disabled = true;
-        });
-        
-        // ฟังก์ชันสำหรับการดาวน์โหลดรูปภาพ
-        downloadButton.addEventListener('click', () => {
-            if (!image) return;
-            
-            // สร้าง canvas ชั่วคราวสำหรับการดาวน์โหลด
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-            
-            // วาดรูปต้นฉบับ
-            tempCtx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            
-            // วาดข้อความทั้งหมด
-            const canvasRect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / canvasRect.width;
-            const scaleY = canvas.height / canvasRect.height;
-            
-            textItems.forEach(item => {
-                const rect = item.element.getBoundingClientRect();
-                const relativeRect = {
-                    x: rect.left - canvasRect.left,
-                    y: rect.top - canvasRect.top,
-                    width: rect.width,
-                    height: rect.height
-                };
-                
-                tempCtx.fillStyle = item.color;
-                tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
-                
-                // คำนวณตำแหน่งและขนาดบน canvas จริง
-                const x = relativeRect.x * scaleX;
-                const y = relativeRect.y * scaleY + (item.fontSize * scaleY);
-                
-                tempCtx.fillText(item.text, x, y);
-            });
-            
-            // สร้าง URL สำหรับการดาวน์โหลด
-            const downloadLink = document.createElement('a');
-            downloadLink.download = 'edited-image.png';
-            downloadLink.href = tempCanvas.toDataURL('image/png');
-            downloadLink.click();
-        });
-        
-        // อัปเดตข้อความเมื่อมีการเปลี่ยนแปลงรูปแบบ
-        colorPicker.addEventListener('change', updateTextStyle);
-        fontSizeSelector.addEventListener('change', updateTextStyle);
-        fontFamilySelector.addEventListener('change', updateTextStyle);
-        
-        function updateTextStyle() {
-            if (!selectedText) return;
-            
-            const color = colorPicker.value;
-            const fontSize = fontSizeSelector.value;
-            const fontFamily = fontFamilySelector.value;
-            
-            selectedText.color = color;
-            selectedText.fontSize = fontSize;
-            selectedText.fontFamily = fontFamily;
-            
-            selectedText.element.style.color = color;
-            selectedText.element.style.fontSize = `${fontSize}px`;
-            selectedText.element.style.fontFamily = fontFamily;
-        }
-        
-        // เพิ่มฟีเจอร์เพื่อให้ใช้งานบนมือถือได้ดีขึ้น
-        window.addEventListener('resize', () => {
-            if (image) {
-                drawImage();
-            }
-        });
-        
-        // ป้องกันการเลื่อนหน้าจอเมื่อลากข้อความบนมือถือ
-        canvasContainer.addEventListener('touchmove', (e) => {
-            if (isDragging || isResizing) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-    </script>
+      }
+
+      if (selectedText){
+        selectedText.element.classList.remove('selected');
+        selectedText = null;
+        deleteTextButton.disabled = true;
+        setAlignButtonsState(null);
+      }
+    }
+
+    function dragOrResize(e){
+      if (!isDragging && !isResizing) return;
+      e.preventDefault();
+
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      if (clientX == null || clientY == null) return;
+
+      if (isResizing && selectedText){
+        const width = startWidth + (clientX - startX);
+        const height = startHeight + (clientY - startY);
+        const minSize = 20;
+        selectedText.element.style.width = `${Math.max(width, minSize)}px`;
+        selectedText.element.style.height = `${Math.max(height, minSize)}px`;
+        selectedText.width = Math.max(width, minSize);
+        selectedText.height = Math.max(height, minSize);
+      } else if (isDragging && selectedText){
+        const canvasRect = canvasContainer.getBoundingClientRect();
+        let newX = clientX - canvasRect.left - offsetX;
+        let newY = clientY - canvasRect.top - offsetY;
+        newX = Math.max(0, Math.min(newX, canvasRect.width - selectedText.element.offsetWidth));
+        newY = Math.max(0, Math.min(newY, canvasRect.height - selectedText.element.offsetHeight));
+        selectedText.x = newX; selectedText.y = newY;
+        updateTextPosition(selectedText);
+      }
+    }
+
+    function stopDragOrResize(){
+      isDragging = false;
+      isResizing = false;
+    }
+
+    // ---- Delete text ----
+    deleteTextButton.addEventListener('click', () => {
+      if (!selectedText) return;
+      canvasContainer.removeChild(selectedText.element);
+      textItems = textItems.filter(i => i !== selectedText);
+      selectedText = null;
+      deleteTextButton.disabled = true;
+      setAlignButtonsState(null);
+    });
+
+    // ---- Download (export) ----
+    downloadButton.addEventListener('click', () => {
+      if (!image) return;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+
+      tempCtx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      const canvasRect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / canvasRect.width;
+      const scaleY = canvas.height / canvasRect.height;
+
+      textItems.forEach(item => {
+        const rect = item.element.getBoundingClientRect();
+        const rel = {
+          x: rect.left - canvasRect.left,
+          y: rect.top - canvasRect.top,
+          width: rect.width,
+          height: rect.height
+        };
+
+        tempCtx.fillStyle = item.color;
+        tempCtx.font = `${item.fontSize * scaleY}px ${item.fontFamily}`;
+        // ตั้งค่า alignment ให้ตรงกับที่แสดงผล
+        const align = item.align || 'left';
+        tempCtx.textAlign = align;         // 'left' | 'center' | 'right'
+        tempCtx.textBaseline = 'alphabetic';
+
+        // ตำแหน่ง X ตาม alignment ของกรอบ
+        let x;
+        if (align === 'left')      x = rel.x * scaleX;
+        else if (align === 'center') x = (rel.x + rel.width / 2) * scaleX;
+        else                        x = (rel.x + rel.width) * scaleX;
+
+        const y = (rel.y * scaleY) + (item.fontSize * scaleY); // ยกขึ้นตามขนาดฟอนต์
+
+        tempCtx.fillText(item.text, x, y);
+      });
+
+      const a = document.createElement('a');
+      a.download = 'edited-image.png';
+      a.href = tempCanvas.toDataURL('image/png');
+      a.click();
+    });
+
+    // ---- Update style of selected text ----
+    colorPicker.addEventListener('change', updateTextStyle);
+    fontSizeSelector.addEventListener('change', updateTextStyle);
+    fontFamilySelector.addEventListener('change', updateTextStyle);
+
+    function updateTextStyle(){
+      if (!selectedText) return;
+      const color = colorPicker.value;
+      const fontSize = fontSizeSelector.value;
+      const fontFamily = fontFamilySelector.value;
+
+      selectedText.color = color;
+      selectedText.fontSize = fontSize;
+      selectedText.fontFamily = fontFamily;
+
+      selectedText.element.style.color = color;
+      selectedText.element.style.fontSize = `${fontSize}px`;
+      selectedText.element.style.fontFamily = fontFamily;
+    }
+
+    // ---- Alignment controls ----
+    alignLeftBtn.addEventListener('click', () => applyAlignment('left'));
+    alignCenterBtn.addEventListener('click', () => applyAlignment('center'));
+    alignRightBtn.addEventListener('click', () => applyAlignment('right'));
+
+    function applyAlignment(al){
+      if (!selectedText) return;
+      selectedText.align = al;
+      selectedText.element.style.textAlign = al;
+      // ทำปุ่ม active ให้ตรงกับค่า
+      setAlignButtonsState(al);
+    }
+
+    function setAlignButtonsState(al){
+      alignButtons.forEach(btn => btn.classList.remove('active'));
+      if (!al){
+        alignButtons.forEach(btn => btn.disabled = true);
+        return;
+      }
+      alignButtons.forEach(btn => btn.disabled = false);
+      if (al === 'left') alignLeftBtn.classList.add('active');
+      if (al === 'center') alignCenterBtn.classList.add('active');
+      if (al === 'right') alignRightBtn.classList.add('active');
+    }
+
+    // enable/disable alignment buttons when selecting
+    // (ค่าตั้งต้น: ปิดไว้จนกว่าจะเลือกข้อความ)
+    setAlignButtonsState(null);
+
+    // ---- Mobile/responsive helpers ----
+    window.addEventListener('resize', () => { if (image) drawImage(); });
+    canvasContainer.addEventListener('touchmove', (e) => {
+      if (isDragging || isResizing) e.preventDefault();
+    }, { passive:false });
+  </script>
 </body>
 </html>
