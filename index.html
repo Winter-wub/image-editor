@@ -211,7 +211,7 @@
         </div>
         
         <div class="text-controls">
-            <input type="text" id="textInput" class="text-input" placeholder="ใส่ข้อความที่นี่">
+            <textarea id="textInput" class="text-input" placeholder="ใส่ข้อความที่นี่" rows="3"></textarea>
             <button class="button" id="addTextButton" disabled>เพิ่มข้อความ</button>
         </div>
         
@@ -552,26 +552,31 @@
                 const scaleX = canvas.width / canvasContainer.clientWidth;
                 const scaleY = canvas.height / canvasContainer.clientHeight;
                 
-                // คำนวณตำแหน่งและขนาดบน canvas จริง
-                let x = item.x * scaleX;
+                // จัดการการขึ้นบรรทัดใหม่
+                const lines = item.text.split('\n');
                 
-                // จัดตำแหน่งข้อความตาม textAlign
-                if (item.textAlign === 'center') {
-                    x = (item.x + item.width/2) * scaleX;
-                    tempCtx.textAlign = 'center';
-                } else if (item.textAlign === 'right') {
-                    x = (item.x + item.width) * scaleX;
-                    tempCtx.textAlign = 'right';
-                } else {
-                    x = item.x * scaleX;
-                    tempCtx.textAlign = 'left';
-                }
-                
-                const y = (item.y + item.fontSize) * scaleY;
-                
-                tempCtx.fillStyle = item.color;
-                tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
-                tempCtx.fillText(item.text, x, y);
+                lines.forEach((line, index) => {
+                    // คำนวณตำแหน่งและขนาดบน canvas จริง
+                    let x = item.x * scaleX;
+                    
+                    // จัดตำแหน่งข้อความตาม textAlign
+                    if (item.textAlign === 'center') {
+                        x = (item.x + item.width/2) * scaleX;
+                        tempCtx.textAlign = 'center';
+                    } else if (item.textAlign === 'right') {
+                        x = (item.x + item.width) * scaleX;
+                        tempCtx.textAlign = 'right';
+                    } else {
+                        x = item.x * scaleX;
+                        tempCtx.textAlign = 'left';
+                    }
+                    
+                    const y = (item.y + (index + 1) * item.fontSize * 0.8) * scaleY;
+                    
+                    tempCtx.fillStyle = item.color;
+                    tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
+                    tempCtx.fillText(line, x, y);
+                });
             });
             
             // สร้าง URL สำหรับการดาวน์โหลด
