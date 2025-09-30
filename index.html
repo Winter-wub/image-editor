@@ -561,14 +561,14 @@
                     
                     // จัดตำแหน่งข้อความตาม textAlign
                     if (item.textAlign === 'center') {
-                        x = (item.x + item.width/2) * scaleX;
                         tempCtx.textAlign = 'center';
+                        x = (item.x + item.width/2) * scaleX;
                     } else if (item.textAlign === 'right') {
-                        x = (item.x + item.width) * scaleX;
                         tempCtx.textAlign = 'right';
+                        x = (item.x + item.width) * scaleX;
                     } else {
-                        x = item.x * scaleX;
                         tempCtx.textAlign = 'left';
+                        x = item.x * scaleX;
                     }
                     
                     const y = (item.y + (index + 1) * item.fontSize * 0.8) * scaleY;
