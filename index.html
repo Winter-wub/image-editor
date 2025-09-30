@@ -561,9 +561,6 @@
                     
                     // จัดตำแหน่งข้อความตาม textAlign
                     if (item.textAlign === 'center') {
-                        // คำนวณความกว้างของบรรทัดปัจจุบัน
-                        tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
-                        const lineWidth = tempCtx.measureText(line).width;
                         x = (item.x + item.width/2) * scaleX;
                         tempCtx.textAlign = 'center';
                     } else if (item.textAlign === 'right') {
@@ -630,4 +627,3 @@
     </script>
 </body>
 </html>
-
