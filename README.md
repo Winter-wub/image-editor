@@ -1,50 +1,28 @@
-# mom_text
+# Image Editor
 
-mom_text is a cross-platform image editor built with Flutter. It allows users to edit images with various tools and effects, supporting Android, iOS, web, macOS, Windows, and Linux platforms.
+A simple web-based image editor.
 
 ## Features
-- Open and edit images from device storage
-- Add, move, and style text overlays
-- Draw and annotate with brushes
-- Apply filters and effects
-- Export edited images
-- Responsive UI for mobile and desktop
+- Load and display images
+- Basic image editing (add your features here)
+- User-friendly interface
 
 ## Getting Started
 
-### Prerequisites
-- [Flutter SDK](https://flutter.dev/docs/get-started/install)
-- Dart (comes with Flutter)
-- Platform-specific requirements (Android Studio, Xcode, etc.)
-
-### Installation
 1. Clone the repository:
-   ```sh
-   git clone <your-repo-url>
-   cd image-editor
+   ```bash
+   git clone https://github.com/Winter-wub/image-editor.git
    ```
-2. Install dependencies:
-   ```sh
-   flutter pub get
-   ```
-3. Run the app:
-   ```sh
-   flutter run
-   ```
-   To run on a specific platform, use `-d` (e.g., `flutter run -d chrome` for web).
+2. Open `index.html` in your web browser.
 
 ## Project Structure
-- `lib/` – Main Dart source files
-- `android/`, `ios/`, `macos/`, `linux/`, `windows/` – Platform-specific code
-- `web/` – Web support
-- `test/` – Unit and widget tests
+- `index.html` — Main HTML file for the image editor
 
-## Contributing
-Contributions are welcome! Please open issues or submit pull requests for new features, bug fixes, or improvements.
+## Requirements
+- Modern web browser (Chrome, Firefox, Edge, etc.)
+
+## Usage
+Just open `index.html` in your browser and start editing images!
 
 ## License
-This project is licensed under the MIT License.
-
-## Resources
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Dart Language](https://dart.dev/)
+MIT License
