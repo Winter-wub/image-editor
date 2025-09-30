@@ -241,7 +241,7 @@
             <select id="textAlignSelector" class="text-align-selector">
                 <option value="left">ชิดซ้าย</option>
                 <option value="center">ตรงกลาง</option>
-                <option value="right">ชิดขวา</option>
+                <option value="right" selected>ชิดขวา</option>
             </select>
         </div>
         
@@ -547,39 +547,30 @@
             tempCtx.drawImage(image, 0, 0, canvas.width, canvas.height);
             
             // วาดข้อความทั้งหมด
-            const canvasRect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / canvasRect.width;
-            const scaleY = canvas.height / canvasRect.height;
-            
             textItems.forEach(item => {
-                const rect = item.element.getBoundingClientRect();
-                const relativeRect = {
-                    x: rect.left - canvasRect.left,
-                    y: rect.top - canvasRect.top,
-                    width: rect.width,
-                    height: rect.height
-                };
-                
-                tempCtx.fillStyle = item.color;
-                tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
+                // คำนวณขนาดและตำแหน่งของข้อความในแคนวาสจริง
+                const scaleX = canvas.width / canvasContainer.clientWidth;
+                const scaleY = canvas.height / canvasContainer.clientHeight;
                 
                 // คำนวณตำแหน่งและขนาดบน canvas จริง
-                let x = relativeRect.x * scaleX;
+                let x = item.x * scaleX;
                 
                 // จัดตำแหน่งข้อความตาม textAlign
                 if (item.textAlign === 'center') {
-                    x = relativeRect.x * scaleX + (relativeRect.width * scaleX) / 2;
+                    x = (item.x + item.width/2) * scaleX;
                     tempCtx.textAlign = 'center';
                 } else if (item.textAlign === 'right') {
-                    x = (relativeRect.x + relativeRect.width) * scaleX;
+                    x = (item.x + item.width) * scaleX;
                     tempCtx.textAlign = 'right';
                 } else {
-                    x = relativeRect.x * scaleX;
+                    x = item.x * scaleX;
                     tempCtx.textAlign = 'left';
                 }
                 
-                const y = relativeRect.y * scaleY + (item.fontSize * scaleY);
+                const y = (item.y + item.fontSize) * scaleY;
                 
+                tempCtx.fillStyle = item.color;
+                tempCtx.font = `${item.fontSize}px ${item.fontFamily}`;
                 tempCtx.fillText(item.text, x, y);
             });
             
